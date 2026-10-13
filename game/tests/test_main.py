@@ -3,7 +3,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))  # Добавляем корень проекта в sys.path
 
 # Теперь импортируем классы из их соответствующих файлов
-from game import GameObject  # Класс GameObject из файла game.py
+from game_object import GameObject  # Класс GameObject из файла game.py
 from apple import Apple      # Класс Apple из файла apple.py
 from snake import Snake      # Класс Snake из файла snake.py
 

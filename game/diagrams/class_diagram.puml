@@ -1,0 +1,45 @@
+
+@startuml
+title Диаграмма классов игры «Змейка»
+
+skinparam classAttributeIconSize 0
+
+class GameObject {
+    +position: Optional[Tuple[int, int]]
+    +body_color: Optional[Tuple[int, int, int]]
+    +draw(surface: pygame.Surface): None
+    +draw_cell(surface: pygame.Surface, position: Tuple[int, int], color): None
+}
+
+class Snake {
+    +length: int
+    +positions: List[Tuple[int, int]]
+    +direction: Tuple[int, int]
+    +next_direction: Optional[Tuple[int, int]]
+    +update_direction(new_direction): None
+    +move(): None
+    +get_head_position(): Tuple[int, int]
+    +reset(): None
+    +draw(surface): None
+}
+
+class Apple {
+    +randomize_position(): None
+    +draw(surface): None
+}
+
+GameObject <|-- Snake
+GameObject <|-- Apple
+
+note right of Snake
+  Управляет движением,
+  длиной и столкновениями.
+end note
+
+note right of Apple
+  Хранит позицию яблока
+  и выбирает новую случайную.
+end note
+
+@enduml
+
