@@ -3,7 +3,6 @@ import pygame
 from apple import Apple
 from game_system import System
 from snake import Snake
-import snake
 
 UP = (0, -1)
 DOWN = (0, 1)
@@ -16,6 +15,7 @@ BOARD_BACKGROUND_COLOR = (0,0,0)
 
 class Game:
     def __init__(self):
+        self.system = System()
         self.snake = Snake()
         self.apple = Apple()
         self.score = 0
@@ -44,7 +44,7 @@ class Game:
 
     def update(self):
         while True:
-            System.clock.tick(SPEED)
+            self.system.clock.tick(SPEED)
     
             self.handle_keys()
             self.snake.move()
@@ -60,8 +60,8 @@ class Game:
                     self.apple.randomize_position()
     
             # Отрисовка игрового экрана
-            System.screen.fill(BOARD_BACKGROUND_COLOR)
-            self.snake.draw(System.screen)
-            self.apple.draw(System.screen)
+            self.system.screen.fill(BOARD_BACKGROUND_COLOR)
+            self.snake.draw(self.system.screen)
+            self.apple.draw(self.system.screen)
     
             pygame.display.update()

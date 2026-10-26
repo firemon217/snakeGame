@@ -1,10 +1,10 @@
 from random import randint
 import pygame
 
+from config.game_config_builder import GameConfigBuilder
+from config.game_conifg_director import GameConfigDirector
 from main_menu import MainMenu
 from game_system import System
-from apple import Apple
-from snake import Snake
 from game import Game
 
 # Инициализация PyGame:
@@ -20,8 +20,15 @@ if __name__ == '__main__':
     - Проверяет, съела ли змейка яблоко.
     - Перерисовывает экран.
     """
-    System.initialize()
+    builder = GameConfigBuilder()
+    director = GameConfigDirector(builder)
 
+    # Выбираем конфигурацию игры.
+    config = director.create_normal_config()
+
+    system = System()
+
+    system.initialize()
 
     MainMenu = MainMenu()
     Game = Game()

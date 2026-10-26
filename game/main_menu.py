@@ -12,6 +12,8 @@ class MenuItems(Enum):
 
 class MainMenu:
     def __init__(self):
+        self.system = System()
+
         font = pygame.font.SysFont('Arial', 42, bold=True)
         button_font = pygame.font.SysFont('Arial', 28)
 
@@ -55,7 +57,6 @@ class MainMenu:
         """Отображает главное меню и обрабатывает ввод."""
 
         while True:
-            # Обработка событий
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -95,13 +96,12 @@ class MainMenu:
                 if self.buttons[item].collidepoint(mouse_pos):
                     self.selected_index = index
 
-            # Отрисовка меню
-            System.screen.fill((0, 0, 0))
+            self.system.screen.fill((0, 0, 0))
 
-            System.screen.blit(
+            self.system.screen.blit(
                 self.title,
                 self.title.get_rect(
-                    center=(System.screen_width // 2, 120)
+                    center=(self.system.screen_width // 2, 120)
                 )
             )
 
@@ -109,17 +109,16 @@ class MainMenu:
                 button = self.buttons[item]
                 color = self.button_colors[item]
 
-                # Подсветка выбранного пункта
                 if index == self.selected_index:
                     color = self.adjust_color(color, 40)
                     pygame.draw.rect(
-                        System.screen,
+                        self.system.screen,
                         (0, 255, 125),
                         button.inflate(6, 6),
                         2
                     )
 
-                pygame.draw.rect(System.screen, color, button)
+                pygame.draw.rect(self.system.screen, color, button)
 
                 text = {
                     MenuItems.START_GAME: self.start_text,
@@ -127,13 +126,13 @@ class MainMenu:
                     MenuItems.EXIT: self.exit_text
                 }[item]
 
-                System.screen.blit(
+                self.system.screen.blit(
                     text,
                     text.get_rect(center=button.center)
                 )
 
             pygame.display.flip()
-            System.clock.tick(30)
+            self.system.clock.tick(30)
 
     def navigate(self, direction):
         """Переключает выбранный пункт меню."""

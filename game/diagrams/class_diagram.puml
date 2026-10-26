@@ -1,45 +1,137 @@
+@startuml ClassDiagram
 
-@startuml
-title Диаграмма классов игры «Змейка»
-
+' Настройка стилей
 skinparam classAttributeIconSize 0
+skinparam classFontStyle bold
+skinparam classBackgroundColor #FEFECE
+skinparam classBorderColor #A80036
+skinparam classArrowColor #A80036
+skinparam packageStyle rectangle
+skinparam shadowing false
 
-class GameObject {
-    +position: Optional[Tuple[int, int]]
-    +body_color: Optional[Tuple[int, int, int]]
-    +draw(surface: pygame.Surface): None
-    +draw_cell(surface: pygame.Surface, position: Tuple[int, int], color): None
+' Перечисления
+enum MenuItems {
+    START_GAME = 0
+    OPTIONS = 1
+    EXIT = 2
+}
+
+' Классы
+class MainMenu {
+    - title : pygame.Surface
+    - start_text : pygame.Surface
+    - option_text : pygame.Surface
+    - exit_text : pygame.Surface
+    - start_button : pygame.Rect
+    - option_button : pygame.Rect
+    - exit_button : pygame.Rect
+    - menu_items : list[MenuItems]
+    - button_colors : dict[MenuItems, tuple]
+    - buttons : dict[MenuItems, pygame.Rect]
+    - selected_index : int
+    __
+    + __init__()
+    + show_menu() : None
+    + navigate(direction : str) : None
+    + {static} adjust_color(color : tuple, amount : int) : tuple
+    + select_item() : bool
+}
+
+class Game {
+    - snake : Snake
+    - apple : Apple
+    - score : int
+    - game_over : bool
+    __
+    + __init__()
+    + handle_keys() : None
+    + update() : None
 }
 
 class Snake {
-    +length: int
-    +positions: List[Tuple[int, int]]
-    +direction: Tuple[int, int]
-    +next_direction: Optional[Tuple[int, int]]
-    +update_direction(new_direction): None
-    +move(): None
-    +get_head_position(): Tuple[int, int]
-    +reset(): None
-    +draw(surface): None
+    - length : int
+    - positions : list[tuple[int, int]]
+    - direction : tuple[int, int]
+    - next_direction : Optional[tuple[int, int]]
+    __
+    + __init__()
+    + update_direction(new_direction : tuple[int, int]) : None
+    + move() : None
+    + get_head_position() : tuple[int, int]
+    + reset() : None
+    + draw(surface : pygame.Surface) : None
 }
 
 class Apple {
-    +randomize_position(): None
-    +draw(surface): None
+    __
+    + __init__()
+    + randomize_position() : None
+    + draw(surface : pygame.Surface) : None
 }
 
-GameObject <|-- Snake
-GameObject <|-- Apple
+class GameObject {
+    # position : Optional[tuple[int, int]]
+    # body_color : Optional[tuple[int, int, int]]
+    __
+    + __init__(position : Optional[tuple[int, int]] = None, body_color : Optional[tuple[int, int, int]] = None)
+    + draw(surface : pygame.Surface) : None
+    + draw_cell(surface : pygame.Surface, position : tuple[int, int], color : Optional[tuple[int, int, int]] = None) : None
+}
+
+class System {
+    {static} + screen_width : int = 640
+    {static} + screen_height : int = 480
+    {static} + screen : pygame.Surface = None
+    {static} + clock : pygame.time.Clock = None
+    __
+    + {static} initialize() : None
+    + {static} setScreenSize(width : int, height : int) : None
+}
+
+' Отношения
+Snake --|> GameObject : extends
+Apple --|> GameObject : extends
+MainMenu --> MenuItems : uses
+Game --> Snake : contains
+Game --> Apple : contains
+Game --> System : uses
+MainMenu --> System : uses
+Snake --> System : uses
+Apple --> System : uses
+GameObject --> System : uses
+
+' Примечания
+note right of MainMenu
+  Главное меню игры.
+  Обрабатывает навигацию
+  и выбор пунктов меню.
+end note
+
+note right of Game
+  Основной игровой цикл.
+  Управляет змейкой и яблоком.
+end note
 
 note right of Snake
-  Управляет движением,
-  длиной и столкновениями.
+  Змейка игрока.
+  Движется по сетке,
+  растёт при поедании яблок.
 end note
 
 note right of Apple
-  Хранит позицию яблока
-  и выбирает новую случайную.
+  Яблоко на игровом поле.
+  Появляется в случайном месте.
+end note
+
+note right of GameObject
+  Базовый класс для всех
+  игровых объектов.
+end note
+
+note right of System
+  Статический класс для
+  управления экраном и
+  игровым циклом.
 end note
 
 @enduml
-
