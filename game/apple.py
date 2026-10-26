@@ -14,7 +14,7 @@ APPLE_COLOR = (255, 125, 0)
 class Apple(GameObject):
     """Яблоко"""
 
-    def __init__(self) -> None:
+    def __init__(self, config=None) -> None:
         """Инициализирует яблоко на игры поле."""
         super().__init__(None, APPLE_COLOR)
         self.randomize_position()
@@ -28,3 +28,10 @@ class Apple(GameObject):
         """Отрисовывает яблоко на игры поверхности."""
         self.draw_cell(surface, self.position)
 
+class GoldenApple(Apple):
+    """Золотое яблоко, приносящее больше очков."""
+
+    def __init__(self, config=None):
+        super().__init__(config)
+        self.body_color = (255, 215, 0)
+        self.points = 5

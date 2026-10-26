@@ -1,6 +1,7 @@
 import pygame
 
 from apple import Apple
+from factory.apple_factory import AppleCreator
 from game_system import System
 from snake import Snake
 
@@ -17,7 +18,8 @@ class Game:
     def __init__(self):
         self.system = System()
         self.snake = Snake()
-        self.apple = Apple()
+        self.apple_factory = AppleCreator()
+        self.apple = self.apple_factory.create()
         self.score = 0
         self.game_over = False
 
@@ -51,11 +53,13 @@ class Game:
     
             # Проверка, съела ли змейка яблоко
             if self.snake.get_head_position() == self.apple.position:
-                self.snake.length += 1  # Увеличение длины змейки
+                self.snake.length += 1
+
+                # Создаём новое яблоко клонированием предыдущего.
+                self.apple = self.apple.clone()
                 self.apple.randomize_position()
-                print(f'Новое яблоко на позиции: {self.apple.position}')
-                
-                # Гарантия, что яблоко не появится внутри змейки
+
+                # Не размещаем яблоко внутри змейки.
                 while self.apple.position in self.snake.positions:
                     self.apple.randomize_position()
     

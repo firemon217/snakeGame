@@ -1,5 +1,6 @@
 import pygame
 from typing import Optional, Tuple
+from copy import deepcopy
 
 # Константы для размеров поля и сетки:
 SCREEN_WIDTH, SCREEN_HEIGHT = 640, 480
@@ -27,3 +28,7 @@ class GameObject:
         rect = rect = pygame.Rect(position[0], position[1], GRID_SIZE, GRID_SIZE)
         pygame.draw.rect(surface, color or self.body_color, rect)
         pygame.draw.rect(surface, BORDER_COLOR, rect, 1)
+
+    def clone(self):
+        """Создаёт независимую копию игрового объекта."""
+        return deepcopy(self)
