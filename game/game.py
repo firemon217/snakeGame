@@ -6,7 +6,9 @@ from game_system import System
 from snake import Snake
 
 from input_adapter import InputAdapter
-from renderers import PygameRenderer, NeonRenderer
+from renderers import NeonRenderer
+from apple_decorator import GoldenAppleDecorator
+from game_composite import GameGroup
 
 UP = (0, -1)
 DOWN = (0, 1)
@@ -24,6 +26,7 @@ class Game:
         self.input_adapter = InputAdapter(self.snake)
         self.apple_factory = AppleCreator()
         self.apple = self.apple_factory.create(renderer=NeonRenderer())
+        self.apple = GoldenAppleDecorator(self.apple)
         self.score = 0
         self.game_over = False
 
@@ -56,12 +59,18 @@ class Game:
                 self.apple.randomize_position()
 
                 # Не размещаем яблоко внутри змейки.
-                while self.apple.position in self.snake.positions:
+                while self.apple.position in [segment.position for segment in self.snake.segments]:
+                    self.score += self.apple.points
                     self.apple.randomize_position()
     
             # Отрисовка игрового экрана
             self.system.screen.fill(BOARD_BACKGROUND_COLOR)
-            self.snake.draw(self.system.screen)
+            snake_group = GameGroup()
+
+            for segment in self.snake.segments:
+                snake_group.add(segment)
+
+            snake_group.draw(self.system.screen)
             self.apple.draw(self.system.screen)
     
             pygame.display.update()

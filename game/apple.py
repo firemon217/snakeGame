@@ -27,11 +27,3 @@ class Apple(GameObject):
     def draw(self, surface: pygame.Surface) -> None:
         """Отрисовывает яблоко на игры поверхности."""
         self.draw_cell(surface, self.position)
-
-class GoldenApple(Apple):
-    """Золотое яблоко, приносящее больше очков."""
-
-    def __init__(self, renderer=None):
-        super().__init__(renderer)
-        self.body_color = (255, 215, 0)
-        self.points = 5

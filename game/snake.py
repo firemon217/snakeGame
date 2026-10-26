@@ -1,4 +1,5 @@
 import pygame
+from game_composite import GameComponent
 from game_object import GameObject
 from typing import Optional, Tuple, List
 
@@ -10,6 +11,21 @@ GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE  # Количество клеток п
 SNAKE_COLOR = (0, 255, 125)  # Цвет змейки
 
 
+
+class SnakeSegment(GameComponent):
+    """Один сегмент тела змейки."""
+
+    def __init__(self, game_object, position):
+        self.game_object = game_object
+        self.position = position
+
+    def draw(self, surface):
+        self.game_object.draw_cell(
+            surface,
+            self.position,
+            self.game_object.body_color
+        )
+    
 class Snake(GameObject):
     """
     Класс, представляющий змейку в игре.
@@ -21,7 +37,7 @@ class Snake(GameObject):
         """
         super().__init__((GRID_WIDTH // 2 * GRID_SIZE, GRID_HEIGHT // 2 * GRID_SIZE), SNAKE_COLOR, renderer)
         self.length: int = 1
-        self.positions: List[Tuple[int, int]] = [self.position]
+        self.segments: List[SnakeSegment] = [SnakeSegment(self, self.position)]
         self.direction: Tuple[int, int] = (1, 0)
         self.next_direction: Optional[Tuple[int, int]] = None
 
@@ -41,20 +57,20 @@ class Snake(GameObject):
             self.direction = self.next_direction
             self.next_direction = None
 
-        cur_head = self.positions[0]  # Текущая голова змейки
+        cur_head = self.segments[0]  # Текущая голова змейки
         x, y = self.direction
         
         # Рассчитываем новую позицию головы с учётом границ экрана
-        new_head = ((cur_head[0] + x * GRID_SIZE) % SCREEN_WIDTH,
-                    (cur_head[1] + y * GRID_SIZE) % SCREEN_HEIGHT)
+        new_head = ((cur_head.position[0] + x * GRID_SIZE) % SCREEN_WIDTH,
+                    (cur_head.position[1] + y * GRID_SIZE) % SCREEN_HEIGHT)
 
         # Проверяем столкновение с телом
-        if len(self.positions) > 2 and new_head in self.positions[2:]:
+        if len(self.segments) > 2 and new_head in [segment.position for segment in self.segments[2:]]:
             self.reset()
         else:
-            self.positions.insert(0, new_head)  # Добавляем новую голову
-            if len(self.positions) > self.length:
-                self.positions.pop()  # Удаляем последний сегмент, если змейка не растёт
+            self.segments.insert(0, SnakeSegment(self, new_head))  # Добавляем новую голову
+            if len(self.segments) > self.length:
+                self.segments.pop()  # Удаляем последний сегмент, если змейка не растёт
 
     def get_head_position(self) -> Tuple[int, int]:
         """
@@ -62,14 +78,14 @@ class Snake(GameObject):
         
         :return: Кортеж с координатами (x, y).
         """
-        return self.positions[0]
+        return self.segments[0].position
 
     def reset(self) -> None:
         """
         Сбрасывает змейку в начальное состояние после столкновения с собой.
         """
         self.length = 1
-        self.positions = [(GRID_WIDTH // 2 * GRID_SIZE, GRID_HEIGHT // 2 * GRID_SIZE)]
+        self.segments = [SnakeSegment(self, (GRID_WIDTH // 2 * GRID_SIZE, GRID_HEIGHT // 2 * GRID_SIZE))]
         self.direction = (1, 0)
         self.next_direction = None
 
@@ -80,7 +96,4 @@ class Snake(GameObject):
         
         :param surface: Поверхность Pygame, на которой рисуется змейка.
         """
-        for position in self.positions[:-1]:
-            self.draw_cell(surface, position)  # Отрисовка тела змейки
-        
-        self.draw_cell(surface, self.positions[0], SNAKE_COLOR)  # Отрисовка головы
+        pass
