@@ -15,11 +15,11 @@ class Snake(GameObject):
     Класс, представляющий змейку в игре.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, renderer=None) -> None:
         """
         Инициализирует змейку в центре экрана.
         """
-        super().__init__((GRID_WIDTH // 2 * GRID_SIZE, GRID_HEIGHT // 2 * GRID_SIZE), SNAKE_COLOR)
+        super().__init__((GRID_WIDTH // 2 * GRID_SIZE, GRID_HEIGHT // 2 * GRID_SIZE), SNAKE_COLOR, renderer)
         self.length: int = 1
         self.positions: List[Tuple[int, int]] = [self.position]
         self.direction: Tuple[int, int] = (1, 0)

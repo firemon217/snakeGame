@@ -4,10 +4,10 @@ class GameObjectCreator(ABC):
     """Базовый создатель игровых объектов."""
 
     @abstractmethod
-    def factory_method(self, config=None):
+    def factory_method(self, renderer=None):
         """Создаёт игровой объект."""
         pass
 
-    def create(self, config=None):
+    def create(self, renderer=None):
         """Общий метод создания объекта."""
-        return self.factory_method(config)
+        return self.factory_method(renderer)

@@ -5,6 +5,9 @@ from factory.apple_factory import AppleCreator
 from game_system import System
 from snake import Snake
 
+from input_adapter import InputAdapter
+from renderers import PygameRenderer, NeonRenderer
+
 UP = (0, -1)
 DOWN = (0, 1)
 LEFT = (-1, 0)
@@ -17,32 +20,25 @@ BOARD_BACKGROUND_COLOR = (0,0,0)
 class Game:
     def __init__(self):
         self.system = System()
-        self.snake = Snake()
+        self.snake = Snake(renderer=NeonRenderer())
+        self.input_adapter = InputAdapter(self.snake)
         self.apple_factory = AppleCreator()
-        self.apple = self.apple_factory.create()
+        self.apple = self.apple_factory.create(renderer=NeonRenderer())
         self.score = 0
         self.game_over = False
 
-    def handle_keys(self) -> None:
-        """
-        Обрабатывает нажатия клавиш для управления змейкой.
-        """
+    def handle_keys(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 raise SystemExit
+
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    self.snake.update_direction(UP)
-                elif event.key == pygame.K_DOWN:
-                    self.snake.update_direction(DOWN)
-                elif event.key == pygame.K_LEFT:
-                    self.snake.update_direction(LEFT)
-                elif event.key == pygame.K_RIGHT:
-                    self.snake.update_direction(RIGHT)
-                elif event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_ESCAPE:
                     pygame.quit()
                     raise SystemExit
+
+            self.input_adapter.handle_event(event)
 
     def update(self):
         while True:

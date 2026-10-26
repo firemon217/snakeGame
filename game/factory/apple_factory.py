@@ -5,11 +5,11 @@ from .game_object_factory import GameObjectCreator
 class GoldenAppleCreator(GameObjectCreator):
     """Создатель золотых яблок."""
 
-    def factory_method(self, config=None):
-        return GoldenApple(config)
+    def factory_method(self, renderer=None):
+        return GoldenApple(renderer)
 
 class AppleCreator(GameObjectCreator):
     """Создатель обычных яблок."""
 
-    def factory_method(self, config=None):
-        return Apple(config)
+    def factory_method(self, renderer=None):
+        return Apple(renderer)
