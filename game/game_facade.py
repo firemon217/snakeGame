@@ -3,12 +3,12 @@ import pygame
 
 from game_system import System
 from snake import GRID_SIZE, Snake
-from apple import Apple
 from factory.apple_factory import AppleCreator
 from game_composite import GameGroup
 from input_adapter import InputAdapter
 
 from factory.snake_segment_factory import SnakeSegmentFactory
+from render_proxy import RenderProxy
 
 BOARD_BACKGROUND_COLOR = (0,0,0)
 
@@ -21,7 +21,8 @@ class GameFacade:
         self.system = System()
 
         self.snake = Snake(renderer)
-        self.apple = Apple(renderer)
+        self.apple_factory = AppleCreator()
+        self.apple = RenderProxy(self.apple_factory.factory_method(renderer))
 
         self.input_adapter = InputAdapter(self.snake)
 

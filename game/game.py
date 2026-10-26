@@ -1,9 +1,6 @@
 import pygame
 
-from apple import Apple
-from factory.apple_factory import AppleCreator
 from game_system import System
-from snake import Snake
 
 from renderers import NeonRenderer
 from game_facade import GameFacade
