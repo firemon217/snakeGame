@@ -21,6 +21,6 @@ class GameGroup(GameComponent):
     def remove(self, component):
         self.children.remove(component)
 
-    def draw(self, surface):
+    def draw(self, flyweight):
         for component in self.children:
-            component.draw(surface)
+            flyweight.draw(component)

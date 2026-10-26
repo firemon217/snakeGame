@@ -11,6 +11,22 @@ GRID_HEIGHT = SCREEN_HEIGHT // GRID_SIZE  # Количество клеток п
 SNAKE_COLOR = (0, 255, 125)  # Цвет змейки
 
 
+class SnakeSegmentFlyweight:
+    """Общие данные сегментов змейки."""
+
+    def __init__(self, surface, color, grid_size, renderer):
+        self.surface = surface
+        self.color = color
+        self.grid_size = grid_size
+        self.renderer = renderer
+
+    def draw(self, component):
+        self.renderer.draw_cell(
+            self.surface,
+            component.position,
+            self.color,
+            self.grid_size
+        )
 
 class SnakeSegment(GameComponent):
     """Один сегмент тела змейки."""
@@ -19,12 +35,10 @@ class SnakeSegment(GameComponent):
         self.game_object = game_object
         self.position = position
 
-    def draw(self, surface):
-        self.game_object.draw_cell(
-            surface,
-            self.position,
-            self.game_object.body_color
-        )
+    def draw(self, flyweight):
+        flyweight.draw(self)
+
+    
     
 class Snake(GameObject):
     """
@@ -89,11 +103,5 @@ class Snake(GameObject):
         self.direction = (1, 0)
         self.next_direction = None
 
-    def draw(self, surface: pygame.Surface) -> None:
-        """
-        Отображает змейку на игровом поле.
-        Голова выделяется отдельным цветом.
-        
-        :param surface: Поверхность Pygame, на которой рисуется змейка.
-        """
+    def draw(self, surface):
         pass
