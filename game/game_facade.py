@@ -5,12 +5,13 @@ from game_system import System
 from snake import GRID_SIZE, Snake
 from factory.apple_factory import AppleCreator
 from game_composite import GameGroup
-from input_adapter import InputAdapter
+from event_handlers import create_game_event_chain
 
 from factory.snake_segment_factory import SnakeSegmentFactory
 from render_proxy import RenderProxy
 
-BOARD_BACKGROUND_COLOR = (0,0,0)
+BOARD_BACKGROUND_COLOR = (0, 0, 0)
+
 
 class GameFacade:
     """Упрощённый интерфейс для основных игровых подсистем."""
@@ -22,22 +23,23 @@ class GameFacade:
 
         self.snake = Snake(renderer)
         self.apple_factory = AppleCreator()
-        self.apple = RenderProxy(self.apple_factory.factory_method(renderer))
+        self.apple = RenderProxy(
+            self.apple_factory.factory_method(renderer)
+        )
 
-        self.input_adapter = InputAdapter(self.snake)
+        # Создание цепочки ответственности.
+        self.event_handler = create_game_event_chain(self.snake)
 
     def handle_event(self, event):
-        """Передаёт управление клавишами змейке."""
-        if event.type != pygame.KEYDOWN:
-            return
+        """Передаёт событие первому обработчику цепочки."""
+        self.event_handler.handle(event)
 
-        self.input_adapter.handle_event(event)
-        
     def update(self):
         """Обновляет состояние игровых объектов."""
+
         self.snake.move()
 
-        # Проверка, съела ли змейка яблоко
+        # Проверка, съела ли змейка яблоко.
         if self.snake.get_head_position() == self.apple.position:
             self.snake.length += 1
 
@@ -46,11 +48,13 @@ class GameFacade:
             self.apple.randomize_position()
 
             # Не размещаем яблоко внутри змейки.
-            while self.apple.position in [segment.position for segment in self.snake.segments]:
+            while self.apple.position in [
+                segment.position for segment in self.snake.segments
+            ]:
                 self.score += self.apple.points
                 self.apple.randomize_position()
 
-        # Отрисовка игрового экрана
+        # Отрисовка игрового экрана.
         self.system.screen.fill(BOARD_BACKGROUND_COLOR)
         snake_group = GameGroup()
 
